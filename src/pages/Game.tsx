@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Clock, Check } from "lucide-react";
+import { ArrowLeft, Clock, Check, Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
 
 const categories = ["Name", "Place", "Animal", "Thing"];
@@ -25,6 +25,13 @@ const Game = () => {
     Animal: "",
     Thing: "",
   });
+  const [isRecording, setIsRecording] = useState<{ [key: string]: boolean }>({
+    Name: false,
+    Place: false,
+    Animal: false,
+    Thing: false,
+  });
+  const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
     // Generate random letter
@@ -47,6 +54,55 @@ const Game = () => {
 
   const handleAnswerChange = (category: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [category]: value }));
+  };
+
+  const startVoiceInput = (category: string) => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      toast.error("Voice input is not supported in your browser");
+      return;
+    }
+
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsRecording((prev) => ({ ...prev, [category]: true }));
+      toast.info("Listening...");
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setAnswers((prev) => ({ ...prev, [category]: transcript }));
+      toast.success("Voice input captured!");
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error:", event.error);
+      toast.error("Failed to capture voice input");
+      setIsRecording((prev) => ({ ...prev, [category]: false }));
+    };
+
+    recognition.onend = () => {
+      setIsRecording((prev) => ({ ...prev, [category]: false }));
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  };
+
+  const stopVoiceInput = (category: string) => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording((prev) => ({ ...prev, [category]: false }));
+    }
   };
 
   const handleSubmit = () => {
@@ -111,12 +167,27 @@ const Game = () => {
             {categories.map((category) => (
               <div key={category} className="space-y-2">
                 <Label className="text-lg font-semibold">{category}</Label>
-                <Input
-                  value={answers[category]}
-                  onChange={(e) => handleAnswerChange(category, e.target.value)}
-                  placeholder={`Enter a ${category.toLowerCase()} starting with ${currentLetter}`}
-                  className="h-12 text-lg"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    value={answers[category]}
+                    onChange={(e) => handleAnswerChange(category, e.target.value)}
+                    placeholder={`Enter a ${category.toLowerCase()} starting with ${currentLetter}`}
+                    className="h-12 text-lg"
+                  />
+                  <Button
+                    type="button"
+                    variant={isRecording[category] ? "destructive" : "outline"}
+                    size="icon"
+                    className="h-12 w-12 shrink-0"
+                    onClick={() => isRecording[category] ? stopVoiceInput(category) : startVoiceInput(category)}
+                  >
+                    {isRecording[category] ? (
+                      <MicOff className="w-5 h-5" />
+                    ) : (
+                      <Mic className="w-5 h-5" />
+                    )}
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

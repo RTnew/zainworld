@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,6 +11,24 @@ const Results = () => {
 
   const score = Math.floor(Math.random() * 80) + 20; // Mock score
   const maxScore = totalRounds * 40; // 4 categories * 10 points
+  const accuracy = Math.round((score / maxScore) * 100);
+
+  useEffect(() => {
+    // Save score to localStorage
+    const gameScore = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      rounds: totalRounds,
+      correctAnswers: score,
+      totalAnswers: maxScore,
+      accuracy,
+    };
+
+    const savedScores = localStorage.getItem("npat-scores");
+    const scores = savedScores ? JSON.parse(savedScores) : [];
+    scores.unshift(gameScore);
+    localStorage.setItem("npat-scores", JSON.stringify(scores));
+  }, [totalRounds, score, maxScore, accuracy]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">

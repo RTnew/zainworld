@@ -57,45 +57,66 @@ const Game = () => {
   };
 
   const startVoiceInput = (category: string) => {
+    console.log("Starting voice input for:", category);
+    
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     
     if (!SpeechRecognition) {
-      toast.error("Voice input is not supported in your browser");
+      console.error("Speech Recognition API not available");
+      toast.error("Voice input is not supported in your browser. Try Chrome or Edge.");
       return;
     }
 
     if (recognitionRef.current) {
+      console.log("Stopping previous recognition");
       recognitionRef.current.stop();
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
 
-    recognition.onstart = () => {
-      setIsRecording((prev) => ({ ...prev, [category]: true }));
-      toast.info("Listening...");
-    };
+      recognition.onstart = () => {
+        console.log("Speech recognition started");
+        setIsRecording((prev) => ({ ...prev, [category]: true }));
+        toast.info("🎤 Listening... Speak now!");
+      };
 
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setAnswers((prev) => ({ ...prev, [category]: transcript }));
-      toast.success("Voice input captured!");
-    };
+      recognition.onresult = (event: any) => {
+        console.log("Speech recognition result:", event);
+        const transcript = event.results[0][0].transcript;
+        console.log("Transcript:", transcript);
+        setAnswers((prev) => ({ ...prev, [category]: transcript }));
+        toast.success(`Got it: "${transcript}"`);
+      };
 
-    recognition.onerror = (event: any) => {
-      console.error("Speech recognition error:", event.error);
-      toast.error("Failed to capture voice input");
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error:", event.error);
+        if (event.error === 'not-allowed') {
+          toast.error("Microphone access denied. Please allow microphone access.");
+        } else if (event.error === 'no-speech') {
+          toast.error("No speech detected. Please try again.");
+        } else {
+          toast.error(`Error: ${event.error}`);
+        }
+        setIsRecording((prev) => ({ ...prev, [category]: false }));
+      };
+
+      recognition.onend = () => {
+        console.log("Speech recognition ended");
+        setIsRecording((prev) => ({ ...prev, [category]: false }));
+      };
+
+      recognitionRef.current = recognition;
+      console.log("Starting recognition...");
+      recognition.start();
+    } catch (error) {
+      console.error("Error creating speech recognition:", error);
+      toast.error("Failed to start voice input");
       setIsRecording((prev) => ({ ...prev, [category]: false }));
-    };
-
-    recognition.onend = () => {
-      setIsRecording((prev) => ({ ...prev, [category]: false }));
-    };
-
-    recognitionRef.current = recognition;
-    recognition.start();
+    }
   };
 
   const stopVoiceInput = (category: string) => {

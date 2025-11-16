@@ -30,6 +30,7 @@ const Menu = () => {
             <Button
               variant="outline"
               className="w-full h-14 text-lg hover:bg-muted transition-all"
+              onClick={() => navigate("/scores")}
             >
               <Trophy className="mr-2 w-5 h-5" />
               View Scores
@@ -38,6 +39,7 @@ const Menu = () => {
             <Button
               variant="outline"
               className="w-full h-14 text-lg hover:bg-muted transition-all"
+              onClick={() => navigate("/settings")}
             >
               <Settings className="mr-2 w-5 h-5" />
               Settings

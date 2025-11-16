@@ -9,6 +9,8 @@ import Menu from "./pages/Menu";
 import GameSetup from "./pages/GameSetup";
 import Game from "./pages/Game";
 import Results from "./pages/Results";
+import Settings from "./pages/Settings";
+import Scores from "./pages/Scores";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,8 @@ const App = () => (
           <Route path="/game-setup" element={<GameSetup />} />
           <Route path="/game" element={<Game />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/scores" element={<Scores />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

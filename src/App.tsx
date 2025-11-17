@@ -11,6 +11,9 @@ import Game from "./pages/Game";
 import Results from "./pages/Results";
 import Settings from "./pages/Settings";
 import Scores from "./pages/Scores";
+import MultiplayerSetup from "./pages/MultiplayerSetup";
+import MultiplayerLobby from "./pages/MultiplayerLobby";
+import MultiplayerGame from "./pages/MultiplayerGame";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +33,9 @@ const App = () => (
           <Route path="/results" element={<Results />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/scores" element={<Scores />} />
+          <Route path="/multiplayer-setup" element={<MultiplayerSetup />} />
+          <Route path="/multiplayer-lobby/:roomId" element={<MultiplayerLobby />} />
+          <Route path="/multiplayer-game/:roomId" element={<MultiplayerGame />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

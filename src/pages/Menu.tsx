@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Play, Settings, Trophy, Gamepad2 } from "lucide-react";
+import { Play, Settings, Trophy, Gamepad2, Users } from "lucide-react";
 
 const Menu = () => {
   const navigate = useNavigate();
@@ -24,7 +24,15 @@ const Menu = () => {
               className="w-full h-16 text-lg bg-gradient-primary hover:shadow-hover transition-all"
             >
               <Play className="mr-2 w-6 h-6" />
-              Start New Game
+              Play Solo
+            </Button>
+
+            <Button
+              onClick={() => navigate("/multiplayer-setup")}
+              className="w-full h-16 text-lg bg-gradient-accent hover:shadow-hover transition-all"
+            >
+              <Users className="mr-2 w-6 h-6" />
+              Multiplayer
             </Button>
 
             <Button

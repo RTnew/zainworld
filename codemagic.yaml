@@ -6,8 +6,8 @@ workflows:
     environment:
       node: 18
       vars:
-        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-        PATH: /usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
+        JAVA_HOME: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
+        PATH: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home/bin:$PATH
 
     scripts:
       - name: Install dependencies

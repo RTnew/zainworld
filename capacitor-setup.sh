@@ -1,9 +1,15 @@
 #!/bin/bash
 
-npm install @capacitor/core @capacitor/cli
-npm install @capacitor/android
-npx cap init "NPAT" "com.myNPAT.NPAT" --web-dir=dist
-npm run build
-npx cap add android
+# Install only missing dependencies (if needed)
+npm ci
+
+# Build already happens in YAML, so skip it here
+
+# Ensure Android platform exists
+if [ ! -d "android" ]; then
+  npx cap add android
+fi
+
+# Copy web assets & sync plugins
 npx cap copy
-npx cap sync
+npx cap sync android

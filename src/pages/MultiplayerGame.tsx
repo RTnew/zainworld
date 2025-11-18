@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Mic, MicOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
 
 interface Room {
   id: string;
@@ -33,6 +35,8 @@ const MultiplayerGame = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [allAnswers, setAllAnswers] = useState<PlayerAnswer[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRecording, setIsRecording] = useState<Record<string, boolean>>({});
+  const recognitionRef = useRef<any>(null);
   const playerName = localStorage.getItem("npat-player-name") || "";
 
   useEffect(() => {
@@ -153,6 +157,65 @@ const MultiplayerGame = () => {
     setAnswers((prev) => ({ ...prev, [category]: value }));
   };
 
+  const startVoiceInput = (category: string) => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      sonnerToast.error("Voice input is not supported in your browser. Try Chrome or Edge.");
+      return;
+    }
+
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsRecording((prev) => ({ ...prev, [category]: true }));
+        sonnerToast.info("🎤 Listening... Speak now!");
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setAnswers((prev) => ({ ...prev, [category]: transcript }));
+        sonnerToast.success(`Got it: "${transcript}"`);
+      };
+
+      recognition.onerror = (event: any) => {
+        if (event.error === 'not-allowed') {
+          sonnerToast.error("Microphone access denied. Please allow microphone access.");
+        } else if (event.error === 'no-speech') {
+          sonnerToast.error("No speech detected. Please try again.");
+        } else {
+          sonnerToast.error(`Voice input error: ${event.error}`);
+        }
+        setIsRecording((prev) => ({ ...prev, [category]: false }));
+      };
+
+      recognition.onend = () => {
+        setIsRecording((prev) => ({ ...prev, [category]: false }));
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (error) {
+      sonnerToast.error("Failed to start voice input");
+      setIsRecording((prev) => ({ ...prev, [category]: false }));
+    }
+  };
+
+  const stopVoiceInput = (category: string) => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording((prev) => ({ ...prev, [category]: false }));
+    }
+  };
+
   const submitAnswers = async () => {
     if (!roomId || !playerId || !room) return;
 
@@ -219,12 +282,30 @@ const MultiplayerGame = () => {
                   <Label htmlFor={category} className="mb-2">
                     {category}
                   </Label>
-                  <Input
-                    id={category}
-                    value={answers[category] || ""}
-                    onChange={(e) => handleAnswerChange(category, e.target.value)}
-                    placeholder={`Enter ${category.toLowerCase()} starting with ${room.current_letter}`}
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id={category}
+                      value={answers[category] || ""}
+                      onChange={(e) => handleAnswerChange(category, e.target.value)}
+                      placeholder={`Enter ${category.toLowerCase()} starting with ${room.current_letter}`}
+                    />
+                    <Button
+                      type="button"
+                      variant={isRecording[category] ? "destructive" : "outline"}
+                      size="icon"
+                      onClick={() =>
+                        isRecording[category]
+                          ? stopVoiceInput(category)
+                          : startVoiceInput(category)
+                      }
+                    >
+                      {isRecording[category] ? (
+                        <MicOff className="w-4 h-4" />
+                      ) : (
+                        <Mic className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { ArrowLeft, Users, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +16,8 @@ const MultiplayerSetup = () => {
   const [roomCode, setRoomCode] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const [timeLimit, setTimeLimit] = useState([60]);
+  const [rounds, setRounds] = useState([5]);
 
   const generateRoomCode = () => {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -33,8 +36,7 @@ const MultiplayerSetup = () => {
     setIsCreating(true);
     try {
       const code = generateRoomCode();
-      const categories = JSON.parse(localStorage.getItem("npat-categories") || '["Name", "Place", "Animal", "Thing"]');
-      const rounds = parseInt(localStorage.getItem("npat-rounds") || "5");
+      const categories = ["Name", "Place", "Animal", "Thing"];
 
       const { data: room, error: roomError } = await supabase
         .from("game_rooms")
@@ -42,7 +44,8 @@ const MultiplayerSetup = () => {
           room_code: code,
           host_name: playerName,
           categories,
-          total_rounds: rounds,
+          total_rounds: rounds[0],
+          timer_duration: timeLimit[0],
         })
         .select()
         .single();
@@ -155,6 +158,38 @@ const MultiplayerSetup = () => {
             className="text-lg"
           />
         </div>
+
+        <Card className="p-6 mb-6 shadow-card bg-gradient-card border-0">
+          <h2 className="text-xl font-bold mb-4">Game Settings</h2>
+          
+          <div className="space-y-6 mb-6">
+            <div>
+              <Label className="text-base font-semibold mb-3 block">
+                Time per Round: {timeLimit[0]} seconds
+              </Label>
+              <Slider
+                value={timeLimit}
+                onValueChange={setTimeLimit}
+                min={30}
+                max={180}
+                step={15}
+              />
+            </div>
+
+            <div>
+              <Label className="text-base font-semibold mb-3 block">
+                Number of Rounds: {rounds[0]}
+              </Label>
+              <Slider
+                value={rounds}
+                onValueChange={setRounds}
+                min={1}
+                max={10}
+                step={1}
+              />
+            </div>
+          </div>
+        </Card>
 
         <Card className="p-6 mb-6 shadow-card bg-gradient-card border-0">
           <div className="flex items-center gap-3 mb-4">

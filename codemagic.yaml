@@ -1,26 +1,36 @@
 workflows:
   build-android:
-    name: Build Android APK (Capacitor + Vite)
+    name: Build Android APK
     max_build_duration: 60
 
     environment:
       node: 20
       java: 17
+      npm: 10
 
     scripts:
-      - name: Install dependencies
+      - name: Clean old node modules
         script: |
-          npm ci
+          rm -rf node_modules
+          rm -rf package-lock.json
 
-      - name: Build Vite project
+      - name: Install fresh dependencies
+        script: |
+          npm install --legacy-peer-deps
+
+      - name: Build Vite app
         script: |
           npm run build
 
-      - name: Capacitor Sync Android
+      - name: Copy web build to Capacitor
         script: |
-          npx cap sync android
+          npx cap copy android
 
-      - name: Build Android APK
+      - name: Sync Capacitor
+        script: |
+          npx cap sync android --no-build
+
+      - name: Build Android
         script: |
           cd android
           ./gradlew assembleDebug

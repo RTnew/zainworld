@@ -1,9 +1,15 @@
 #!/bin/bash
 
-# Install only missing dependencies (if needed)
-npm ci
+# Use Node 20 (required for Supabase packages)
+nvm install 20
+nvm use 20
+echo "Using Node:"
+node -v
+echo "Using NPM:"
+npm -v
 
-# Build already happens in YAML, so skip it here
+# Install dependencies
+npm install
 
 # Ensure Android platform exists
 if [ ! -d "android" ]; then

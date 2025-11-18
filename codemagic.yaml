@@ -6,8 +6,8 @@ workflows:
     environment:
       node: 18
       vars:
-        JAVA_HOME: /usr/lib/jvm/java-17-openjdk
-        PATH: /usr/lib/jvm/java-17-openjdk/bin:$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+        PATH: /usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
 
     scripts:
       - name: Install dependencies

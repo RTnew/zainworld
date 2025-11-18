@@ -217,11 +217,32 @@ const MultiplayerGame = () => {
   };
 
   const submitAnswers = async () => {
-    if (!roomId || !playerId || !room) return;
+    console.log("Submit started", { roomId, playerId, room });
+    
+    if (!roomId || !playerId || !room) {
+      toast({
+        title: "Error",
+        description: "Missing required data",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
-      const answerRecords = room.categories.map((category) => ({
+      // Ensure categories is an array
+      const categories = Array.isArray(room.categories) 
+        ? room.categories 
+        : [];
+
+      console.log("Categories:", categories);
+      console.log("Answers:", answers);
+
+      if (categories.length === 0) {
+        throw new Error("No categories found");
+      }
+
+      const answerRecords = categories.map((category: string) => ({
         room_id: roomId,
         player_id: playerId,
         round_number: room.current_round,
@@ -229,11 +250,15 @@ const MultiplayerGame = () => {
         answer: answers[category] || "",
       }));
 
-      const { error } = await supabase
+      console.log("Answer records to submit:", answerRecords);
+
+      const { error, data } = await supabase
         .from("player_answers")
         .upsert(answerRecords, {
           onConflict: "room_id,player_id,round_number,category",
         });
+
+      console.log("Supabase response:", { error, data });
 
       if (error) throw error;
 
@@ -242,10 +267,10 @@ const MultiplayerGame = () => {
         description: "Your answers have been submitted",
       });
     } catch (error: any) {
-      console.error("Error submitting answers:", error);
+      console.error("Submit error:", error);
       toast({
         title: "Error",
-        description: "Failed to submit answers",
+        description: error.message || "Failed to submit answers",
         variant: "destructive",
       });
     } finally {

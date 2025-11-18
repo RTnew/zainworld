@@ -56,6 +56,7 @@ export type Database = {
           id: string
           room_code: string
           status: string
+          timer_duration: number
           total_rounds: number | null
           updated_at: string | null
         }
@@ -68,6 +69,7 @@ export type Database = {
           id?: string
           room_code: string
           status?: string
+          timer_duration?: number
           total_rounds?: number | null
           updated_at?: string | null
         }
@@ -80,6 +82,7 @@ export type Database = {
           id?: string
           room_code?: string
           status?: string
+          timer_duration?: number
           total_rounds?: number | null
           updated_at?: string | null
         }

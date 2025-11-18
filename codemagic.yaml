@@ -10,20 +10,30 @@ workflows:
         PATH: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home/bin:$PATH
 
     scripts:
-      - name: Use Node 20
+      - name: Install Node 20
         script: |
-          echo "Using Node version:"
+          echo "Node version:"
           node -v
+          echo "NPM version:"
           npm -v
 
       - name: Install dependencies
         script: |
           npm install
 
-      - name: Build Vite project
+      - name: Build Vite Project
         script: |
           npm run build
 
-      - name: Run Capacitor sync
+      - name: Capacitor Setup
         script: |
-          npx cap sync android
+          chmod +x capacitor-setup.sh
+          ./capacitor-setup.sh
+
+      - name: Build Android APK
+        script: |
+          cd android
+          ./gradlew assembleDebug
+
+    artifacts:
+      - android/app/build/outputs/**/*.apk

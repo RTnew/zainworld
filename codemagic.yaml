@@ -5,30 +5,20 @@ workflows:
 
     environment:
       node: 20
-      vars:
-        JAVA_HOME: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
-        PATH: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home/bin:$PATH
+      java: 17
 
     scripts:
-      - name: Install Node 20
-        script: |
-          echo "Node version:"
-          node -v
-          echo "NPM version:"
-          npm -v
-
       - name: Install dependencies
         script: |
-          npm install
+          npm ci
 
-      - name: Build Vite Project
+      - name: Build Vite project
         script: |
           npm run build
 
-      - name: Capacitor Setup
+      - name: Capacitor Sync Android
         script: |
-          chmod +x capacitor-setup.sh
-          ./capacitor-setup.sh
+          npx cap sync android
 
       - name: Build Android APK
         script: |

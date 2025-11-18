@@ -4,12 +4,18 @@ workflows:
     max_build_duration: 60
 
     environment:
-      node: 18
+      node: 20
       vars:
         JAVA_HOME: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home
         PATH: /Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home/bin:$PATH
 
     scripts:
+      - name: Use Node 20
+        script: |
+          echo "Using Node version:"
+          node -v
+          npm -v
+
       - name: Install dependencies
         script: |
           npm install
@@ -18,14 +24,6 @@ workflows:
         script: |
           npm run build
 
-      - name: Run Capacitor setup
+      - name: Run Capacitor sync
         script: |
-          bash ./capacitor-setup.sh
-
-      - name: Build Android APK
-        script: |
-          cd android
-          ./gradlew assembleDebug
-
-    artifacts:
-      - android/app/build/outputs/**/**/*.apk
+          npx cap sync android

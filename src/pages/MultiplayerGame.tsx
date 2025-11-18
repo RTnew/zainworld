@@ -8,6 +8,8 @@ import { Mic, MicOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
+import GameTimer from "@/components/GameTimer";
+import RoundCelebration from "@/components/RoundCelebration";
 
 interface Room {
   id: string;
@@ -16,6 +18,7 @@ interface Room {
   current_letter: string;
   current_round: number;
   total_rounds: number;
+  timer_duration: number;
   categories: any; // Using any for JSONB compatibility
 }
 
@@ -36,6 +39,9 @@ const MultiplayerGame = () => {
   const [allAnswers, setAllAnswers] = useState<PlayerAnswer[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRecording, setIsRecording] = useState<Record<string, boolean>>({});
+  const [timeLeft, setTimeLeft] = useState<number>(60);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [allPlayers, setAllPlayers] = useState<string[]>([]);
   const recognitionRef = useRef<any>(null);
   const playerName = localStorage.getItem("npat-player-name") || "";
 
@@ -103,6 +109,7 @@ const MultiplayerGame = () => {
     }
 
     setRoom(data);
+    setTimeLeft(data.timer_duration || 60);
     
     // Initialize empty answers
     const initialAnswers: Record<string, string> = {};
@@ -112,6 +119,23 @@ const MultiplayerGame = () => {
     });
     setAnswers(initialAnswers);
   };
+
+  const fetchPlayers = async () => {
+    if (!roomId) return;
+
+    const { data } = await supabase
+      .from("game_players")
+      .select("player_name")
+      .eq("room_id", roomId);
+
+    if (data) {
+      setAllPlayers(data.map(p => p.player_name));
+    }
+  };
+
+  useEffect(() => {
+    fetchPlayers();
+  }, [roomId]);
 
   const fetchPlayerId = async () => {
     if (!roomId) return;
@@ -216,6 +240,28 @@ const MultiplayerGame = () => {
     }
   };
 
+  // Timer countdown
+  useEffect(() => {
+    if (!room || showCelebration) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [room, timeLeft, showCelebration]);
+
+  const handleTimeUp = () => {
+    if (timeLeft === 0 && !showCelebration && !isSubmitting) {
+      submitAnswers();
+    }
+  };
+
   const submitAnswers = async () => {
     console.log("Submit started", { roomId, playerId, room });
     
@@ -262,6 +308,9 @@ const MultiplayerGame = () => {
 
       if (error) throw error;
 
+      // Show celebration
+      setShowCelebration(true);
+      
       toast({
         title: "Submitted!",
         description: "Your answers have been submitted",
@@ -278,10 +327,23 @@ const MultiplayerGame = () => {
     }
   };
 
+  const handleCelebrationComplete = () => {
+    setShowCelebration(false);
+    setTimeLeft(room?.timer_duration || 60);
+    setAnswers({});
+  };
+
   if (!room) return null;
 
   return (
     <div className="min-h-screen p-6">
+      {showCelebration && (
+        <RoundCelebration
+          players={allPlayers}
+          onComplete={handleCelebrationComplete}
+        />
+      )}
+      
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -289,6 +351,14 @@ const MultiplayerGame = () => {
             <div className="text-sm text-muted-foreground">
               Room: {room.room_code}
             </div>
+          </div>
+
+          <div className="mb-6">
+            <GameTimer
+              timeLeft={timeLeft}
+              totalTime={room.timer_duration}
+              onTimeUp={handleTimeUp}
+            />
           </div>
           <Card className="p-8 text-center shadow-glow bg-gradient-primary border-0">
             <p className="text-xl text-white mb-2">Current Letter</p>
@@ -336,7 +406,7 @@ const MultiplayerGame = () => {
             </div>
             <Button
               onClick={submitAnswers}
-              disabled={isSubmitting}
+              disabled={isSubmitting || showCelebration}
               className="w-full mt-6 bg-gradient-primary"
               size="lg"
             >

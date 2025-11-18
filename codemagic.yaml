@@ -1,6 +1,6 @@
 workflows:
   build-android:
-    name: Build Android Release
+    name: Build Android APK (Capacitor + Vite)
     max_build_duration: 60
     environment:
       node: 18
@@ -9,21 +9,15 @@ workflows:
       - name: Install dependencies
         script: |
           npm install
-          npm install @react-native-community/cli --save-dev
-      - name: Prepare Android assets folder
+
+      - name: Run Capacitor setup (auto-generate android folder)
         script: |
-          mkdir -p android/app/src/main/assets
-      - name: Bundle JS for Android
-        script: |
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file index.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
-      - name: Build APK
+          bash ./capacitor-setup.sh
+
+      - name: Build Android APK
         script: |
           cd android
-          ./gradlew assembleRelease
+          ./gradlew assembleDebug
+
     artifacts:
       - android/app/build/outputs/**/*.apk

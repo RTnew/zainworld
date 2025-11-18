@@ -5,12 +5,14 @@ workflows:
     environment:
       node: 18
       java: 17
-      android: sdk
     scripts:
       - name: Install dependencies
         script: |
           npm install
           npm install @react-native-community/cli --save-dev
+      - name: Prepare Android assets folder
+        script: |
+          mkdir -p android/app/src/main/assets
       - name: Bundle JS for Android
         script: |
           npx react-native bundle \

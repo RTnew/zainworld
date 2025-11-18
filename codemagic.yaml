@@ -14,13 +14,17 @@ workflows:
           rm -rf node_modules
           rm -rf package-lock.json
 
-      - name: Install fresh dependencies
+      - name: Install dependencies
         script: |
           npm install --legacy-peer-deps
 
       - name: Build Vite app
         script: |
           npm run build
+
+      - name: Ensure Capacitor Android folder exists
+        script: |
+          npx cap add android || true
 
       - name: Copy web build to Capacitor
         script: |
@@ -30,9 +34,10 @@ workflows:
         script: |
           npx cap sync android --no-build
 
-      - name: Build Android
+      - name: Build Android APK
         script: |
           cd android
+          chmod +x ./gradlew
           ./gradlew assembleDebug
 
     artifacts:

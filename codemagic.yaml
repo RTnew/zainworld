@@ -9,7 +9,6 @@ workflows:
       npm: 10
 
     scripts:
-
       - name: Clean old node modules
         script: |
           rm -rf node_modules
@@ -23,12 +22,11 @@ workflows:
         script: |
           npm run build
 
-      - name: Delete wrong android folder (force)
+      - name: Remove broken android folder
         script: |
           rm -rf android
-          echo "Old android folder deleted"
 
-      - name: Create Capacitor Android folder (fresh)
+      - name: Create fresh Capacitor Android folder
         script: |
           npx cap add android
 

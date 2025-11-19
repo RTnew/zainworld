@@ -9,35 +9,38 @@ workflows:
       npm: 10
 
     scripts:
+      - name: Install Capacitor globally
+        script: |
+          npm install -g @capacitor/cli
+
       - name: Clean old node modules
         script: |
           rm -rf node_modules
           rm -rf package-lock.json
 
-      - name: Install fresh dependencies
+      - name: Install dependencies
         script: |
           npm install --legacy-peer-deps
 
-      - name: Build Vite app
+      - name: Build Vite project
         script: |
           npm run build
 
       - name: Create Capacitor Android folder (if missing)
         script: |
           if [ ! -d "android" ]; then
-            npx cap init "MyApp" "com.myapp.id" --web-dir=dist
             npx cap add android
           fi
 
       - name: Copy web build to Capacitor
         script: |
-          npx cap copy android
+          npx cap copy
 
       - name: Sync Capacitor
         script: |
-          npx cap sync android --no-build
+          npx cap sync
 
-      - name: Build Android
+      - name: Build Android APK
         script: |
           cd android
           ./gradlew assembleDebug

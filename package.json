@@ -65,6 +65,7 @@
     "zod": "^3.25.76",
     
     "capacitor": "latest",
+     capqcitor.config.json
     "@capacitor/core": "latest",
     "@capacitor/android": "latest"
   },

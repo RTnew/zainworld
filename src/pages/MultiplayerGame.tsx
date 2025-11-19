@@ -87,10 +87,6 @@ const MultiplayerGame = () => {
             const remaining = Math.max(0, updatedRoom.timer_duration - elapsed);
             setTimeLeft(remaining);
           }
-          
-          if (updatedRoom.status === "finished") {
-            navigate(`/multiplayer-results/${roomId}`);
-          }
         }
       )
       .subscribe();
@@ -348,15 +344,9 @@ const MultiplayerGame = () => {
   const handleCelebrationComplete = () => {
     setShowCelebration(false);
     setIsSubmitting(false);
-    setTimeLeft(room?.timer_duration || 60);
     
-    // Reset answers for next round
-    const initialAnswers: Record<string, string> = {};
-    const cats = Array.isArray(room?.categories) ? room.categories : [];
-    cats.forEach((cat: string) => {
-      initialAnswers[cat] = "";
-    });
-    setAnswers(initialAnswers);
+    // Navigate to results page
+    navigate(`/multiplayer-results/${roomId}`);
   };
 
   if (!room) return null;

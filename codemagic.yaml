@@ -14,7 +14,7 @@ workflows:
           rm -rf node_modules
           rm -rf package-lock.json
 
-      - name: Install dependencies
+      - name: Install fresh dependencies
         script: |
           npm install --legacy-peer-deps
 
@@ -22,9 +22,12 @@ workflows:
         script: |
           npm run build
 
-      - name: Ensure Capacitor Android folder exists
+      - name: Create Capacitor Android folder (if missing)
         script: |
-          npx cap add android || true
+          if [ ! -d "android" ]; then
+            npx cap init "MyApp" "com.myapp.id" --web-dir=dist
+            npx cap add android
+          fi
 
       - name: Copy web build to Capacitor
         script: |
@@ -34,10 +37,9 @@ workflows:
         script: |
           npx cap sync android --no-build
 
-      - name: Build Android APK
+      - name: Build Android
         script: |
           cd android
-          chmod +x ./gradlew
           ./gradlew assembleDebug
 
     artifacts:

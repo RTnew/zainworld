@@ -9,36 +9,36 @@ workflows:
       npm: 10
 
     scripts:
-      - name: Clean old node modules
+      - name: Clean node modules
         script: |
           rm -rf node_modules
           rm -rf package-lock.json
 
-      - name: Install fresh dependencies
+      - name: Install dependencies
         script: |
           npm install --legacy-peer-deps
+
+      - name: Remove wrong android folder
+        script: |
+          rm -rf android
+
+      - name: Create fresh Android folder
+        script: |
+          npx cap add android
 
       - name: Build Vite app
         script: |
           npm run build
 
-      - name: Remove broken android folder
-        script: |
-          rm -rf android
-
-      - name: Create fresh Capacitor Android folder
-        script: |
-          npx cap add android
-
       - name: Copy web build to Capacitor
         script: |
-          npx cap copy android
+          npx cap copy
 
       - name: Sync Capacitor
         script: |
           npx cap sync android --no-build
 
-      - name: Build Android
+      - name: Build Android APK
         script: |
           cd android
           ./gradlew assembleDebug

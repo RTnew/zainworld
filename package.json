@@ -64,8 +64,7 @@
     "vaul": "^0.9.9",
     "zod": "^3.25.76",
     
-    "capacitor": "latest",
-     capacitor.config.json
+    "capacitor": "latest"
     "@capacitor/core": "latest",
     "@capacitor/android": "latest"
   },

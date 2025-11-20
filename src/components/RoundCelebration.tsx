@@ -11,15 +11,36 @@ interface RoundCelebrationProps {
 
 const RoundCelebration = ({ players, onComplete, duration = 3000 }: RoundCelebrationProps) => {
   useEffect(() => {
-    // Fire confetti
+    // Fireworks-style celebration effect
     const duration = 3000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    
+    const colors = ['#9b87f5', '#7E69AB', '#6E59A5', '#D946EF', '#F97316'];
 
     const randomInRange = (min: number, max: number) => {
       return Math.random() * (max - min) + min;
     };
 
+    const firework = () => {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { x: randomInRange(0.2, 0.8), y: randomInRange(0.2, 0.5) },
+        colors: colors,
+        startVelocity: 45,
+        gravity: 1.2,
+        scalar: 1.2,
+        ticks: 200,
+        shapes: ['star', 'circle'],
+      });
+    };
+
+    // Initial burst
+    firework();
+    setTimeout(firework, 400);
+    setTimeout(firework, 800);
+    
+    // Continuous smaller bursts
     const interval: any = setInterval(() => {
       const timeLeft = animationEnd - Date.now();
 
@@ -28,19 +49,17 @@ const RoundCelebration = ({ players, onComplete, duration = 3000 }: RoundCelebra
         return;
       }
 
-      const particleCount = 50 * (timeLeft / duration);
-
       confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+        particleCount: 30,
+        spread: 60,
+        origin: { x: Math.random(), y: Math.random() * 0.5 },
+        colors: colors,
+        startVelocity: 30,
+        gravity: 1,
+        ticks: 150,
+        shapes: ['star'],
       });
-      confetti({
-        ...defaults,
-        particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-      });
-    }, 250);
+    }, 500);
 
     const timer = setTimeout(() => {
       onComplete();

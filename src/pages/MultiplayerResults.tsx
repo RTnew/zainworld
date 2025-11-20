@@ -209,15 +209,7 @@ const MultiplayerResults = () => {
     if (!roomId) return;
 
     setIsProgressing(true);
-    toast({
-      title: "Game Finished!",
-      description: "Thanks for playing!",
-    });
-    
-    // Navigate back to menu after a short delay
-    setTimeout(() => {
-      navigate("/menu");
-    }, 2000);
+    navigate(`/multiplayer-final-results/${roomId}`);
   };
 
   if (!room) return null;

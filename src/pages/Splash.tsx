@@ -6,7 +6,17 @@ const Splash = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check if user has already seen splash
+    const hasSeenSplash = localStorage.getItem("hasSeenSplash");
+    
+    if (hasSeenSplash) {
+      // Skip splash and go directly to menu
+      navigate("/menu");
+      return;
+    }
+
     const timer = setTimeout(() => {
+      localStorage.setItem("hasSeenSplash", "true");
       navigate("/onboarding");
     }, 2500);
 

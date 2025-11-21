@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { ArrowLeft, Users, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { CategoryDictionary } from "@/components/CategoryDictionary";
 
 const MultiplayerSetup = () => {
   const navigate = useNavigate();
@@ -147,11 +148,14 @@ const MultiplayerSetup = () => {
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-md mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/menu")}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h1 className="text-4xl font-bold">Multiplayer</h1>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/menu")}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-4xl font-bold">Multiplayer</h1>
+          </div>
+          <CategoryDictionary />
         </div>
 
         <div className="mb-6">

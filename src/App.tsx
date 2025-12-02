@@ -16,6 +16,10 @@ import MultiplayerLobby from "./pages/MultiplayerLobby";
 import MultiplayerGame from "./pages/MultiplayerGame";
 import MultiplayerResults from "./pages/MultiplayerResults";
 import MultiplayerFinalResults from "./pages/MultiplayerFinalResults";
+import OnlineMatchSetup from "./pages/OnlineMatchSetup";
+import OnlineMatchmaking from "./pages/OnlineMatchmaking";
+import OnlineMatch from "./pages/OnlineMatch";
+import OnlineMatchResults from "./pages/OnlineMatchResults";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +44,10 @@ const App = () => (
           <Route path="/multiplayer-game/:roomId" element={<MultiplayerGame />} />
           <Route path="/multiplayer-results/:roomId" element={<MultiplayerResults />} />
           <Route path="/multiplayer-final-results/:roomId" element={<MultiplayerFinalResults />} />
+          <Route path="/online-match-setup" element={<OnlineMatchSetup />} />
+          <Route path="/online-matchmaking" element={<OnlineMatchmaking />} />
+          <Route path="/online-match/:matchId" element={<OnlineMatch />} />
+          <Route path="/online-match-results/:matchId" element={<OnlineMatchResults />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

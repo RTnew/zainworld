@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Play, Settings, Trophy, Gamepad2, Users } from "lucide-react";
+import { Play, Settings, Trophy, Gamepad2, Users, Swords } from "lucide-react";
 
 const Menu = () => {
   const navigate = useNavigate();
@@ -33,6 +33,14 @@ const Menu = () => {
             >
               <Users className="mr-2 w-6 h-6" />
               Multiplayer
+            </Button>
+
+            <Button
+              onClick={() => navigate("/online-match-setup")}
+              className="w-full h-16 text-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:shadow-hover transition-all text-white"
+            >
+              <Swords className="mr-2 w-6 h-6" />
+              Online Match
             </Button>
 
             <Button

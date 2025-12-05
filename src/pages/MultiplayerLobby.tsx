@@ -141,6 +141,7 @@ const MultiplayerLobby = () => {
           status: "playing",
           current_letter: randomLetter,
           current_round: 1,
+          round_started_at: new Date().toISOString(),
         })
         .eq("id", roomId);
 

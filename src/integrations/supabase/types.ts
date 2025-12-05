@@ -55,6 +55,7 @@ export type Database = {
           host_name: string
           id: string
           room_code: string
+          round_started_at: string | null
           status: string
           timer_duration: number
           total_rounds: number | null
@@ -68,6 +69,7 @@ export type Database = {
           host_name: string
           id?: string
           room_code: string
+          round_started_at?: string | null
           status?: string
           timer_duration?: number
           total_rounds?: number | null
@@ -81,10 +83,141 @@ export type Database = {
           host_name?: string
           id?: string
           room_code?: string
+          round_started_at?: string | null
           status?: string
           timer_duration?: number
           total_rounds?: number | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      matchmaking_queue: {
+        Row: {
+          created_at: string
+          id: string
+          match_id: string | null
+          matched_with: string | null
+          player_name: string
+          stake_amount: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          matched_with?: string | null
+          player_name: string
+          stake_amount: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          match_id?: string | null
+          matched_with?: string | null
+          player_name?: string
+          stake_amount?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matchmaking_queue_matched_with_fkey"
+            columns: ["matched_with"]
+            isOneToOne: false
+            referencedRelation: "matchmaking_queue"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      online_match_answers: {
+        Row: {
+          answer: string | null
+          category: string
+          created_at: string
+          id: string
+          is_valid: boolean | null
+          match_id: string
+          player_name: string
+          round_number: number
+        }
+        Insert: {
+          answer?: string | null
+          category: string
+          created_at?: string
+          id?: string
+          is_valid?: boolean | null
+          match_id: string
+          player_name: string
+          round_number: number
+        }
+        Update: {
+          answer?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          is_valid?: boolean | null
+          match_id?: string
+          player_name?: string
+          round_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "online_match_answers_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "online_matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      online_matches: {
+        Row: {
+          categories: Json
+          created_at: string
+          current_letter: string | null
+          current_round: number
+          id: string
+          player1_name: string
+          player2_name: string
+          round_started_at: string | null
+          stake_amount: number
+          status: string
+          timer_duration: number
+          total_rounds: number
+          updated_at: string
+          winner_name: string | null
+        }
+        Insert: {
+          categories?: Json
+          created_at?: string
+          current_letter?: string | null
+          current_round?: number
+          id?: string
+          player1_name: string
+          player2_name: string
+          round_started_at?: string | null
+          stake_amount: number
+          status?: string
+          timer_duration?: number
+          total_rounds?: number
+          updated_at?: string
+          winner_name?: string | null
+        }
+        Update: {
+          categories?: Json
+          created_at?: string
+          current_letter?: string | null
+          current_round?: number
+          id?: string
+          player1_name?: string
+          player2_name?: string
+          round_started_at?: string | null
+          stake_amount?: number
+          status?: string
+          timer_duration?: number
+          total_rounds?: number
+          updated_at?: string
+          winner_name?: string | null
         }
         Relationships: []
       }
@@ -132,6 +265,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_wallets: {
+        Row: {
+          coins: number
+          created_at: string
+          id: string
+          player_name: string
+          total_losses: number
+          total_wins: number
+          updated_at: string
+        }
+        Insert: {
+          coins?: number
+          created_at?: string
+          id?: string
+          player_name: string
+          total_losses?: number
+          total_wins?: number
+          updated_at?: string
+        }
+        Update: {
+          coins?: number
+          created_at?: string
+          id?: string
+          player_name?: string
+          total_losses?: number
+          total_wins?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

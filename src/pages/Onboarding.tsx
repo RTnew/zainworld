@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -26,15 +26,27 @@ const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Check if user has already seen onboarding
+    const hasSeenOnboarding = localStorage.getItem("hasSeenOnboarding");
+    
+    if (hasSeenOnboarding) {
+      // Skip onboarding and go directly to menu
+      navigate("/menu");
+    }
+  }, [navigate]);
+
   const handleNext = () => {
     if (currentStep < onboardingSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      localStorage.setItem("hasSeenOnboarding", "true");
       navigate("/menu");
     }
   };
 
   const handleSkip = () => {
+    localStorage.setItem("hasSeenOnboarding", "true");
     navigate("/menu");
   };
 

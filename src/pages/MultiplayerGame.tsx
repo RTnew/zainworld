@@ -19,6 +19,7 @@ interface Room {
   current_round: number;
   total_rounds: number;
   timer_duration: number;
+  round_started_at: string | null;
   categories: any; // Using any for JSONB compatibility
 }
 
@@ -51,7 +52,7 @@ const MultiplayerGame = () => {
     fetchRoomData();
     fetchPlayerId();
 
-    // Subscribe to answers updates
+    // Subscribe to answers updates and room changes
     const answersChannel = supabase
       .channel(`answers-${roomId}`)
       .on(
@@ -77,8 +78,14 @@ const MultiplayerGame = () => {
         (payload) => {
           const updatedRoom = payload.new as Room;
           setRoom(updatedRoom);
-          if (updatedRoom.status === "finished") {
-            navigate(`/multiplayer-results/${roomId}`);
+          
+          // Calculate time left based on server time
+          if (updatedRoom.round_started_at) {
+            const startTime = new Date(updatedRoom.round_started_at).getTime();
+            const now = Date.now();
+            const elapsed = Math.floor((now - startTime) / 1000);
+            const remaining = Math.max(0, updatedRoom.timer_duration - elapsed);
+            setTimeLeft(remaining);
           }
         }
       )
@@ -109,7 +116,17 @@ const MultiplayerGame = () => {
     }
 
     setRoom(data);
-    setTimeLeft(data.timer_duration || 60);
+    
+    // Calculate time left based on server time if round has started
+    if (data.round_started_at) {
+      const startTime = new Date(data.round_started_at).getTime();
+      const now = Date.now();
+      const elapsed = Math.floor((now - startTime) / 1000);
+      const remaining = Math.max(0, data.timer_duration - elapsed);
+      setTimeLeft(remaining);
+    } else {
+      setTimeLeft(data.timer_duration || 60);
+    }
     
     // Initialize empty answers
     const initialAnswers: Record<string, string> = {};
@@ -256,16 +273,15 @@ const MultiplayerGame = () => {
     return () => clearInterval(timer);
   }, [room, timeLeft, showCelebration]);
 
-  const handleTimeUp = () => {
-    if (timeLeft === 0 && !showCelebration && !isSubmitting) {
-      submitAnswers();
+  const handleTimeUp = async () => {
+    if (!isSubmitting && !showCelebration) {
+      await submitAnswers();
     }
   };
 
   const submitAnswers = async () => {
-    console.log("Submit started", { roomId, playerId, room });
-    
     if (!roomId || !playerId || !room) {
+      console.error("Missing required data:", { roomId, playerId, room });
       toast({
         title: "Error",
         description: "Missing required data",
@@ -274,15 +290,18 @@ const MultiplayerGame = () => {
       return;
     }
 
+    if (isSubmitting) {
+      console.log("Already submitting, skipping");
+      return;
+    }
+
     setIsSubmitting(true);
+    
     try {
       // Ensure categories is an array
       const categories = Array.isArray(room.categories) 
         ? room.categories 
         : [];
-
-      console.log("Categories:", categories);
-      console.log("Answers:", answers);
 
       if (categories.length === 0) {
         throw new Error("No categories found");
@@ -296,15 +315,11 @@ const MultiplayerGame = () => {
         answer: answers[category] || "",
       }));
 
-      console.log("Answer records to submit:", answerRecords);
-
-      const { error, data } = await supabase
+      const { error } = await supabase
         .from("player_answers")
         .upsert(answerRecords, {
           onConflict: "room_id,player_id,round_number,category",
         });
-
-      console.log("Supabase response:", { error, data });
 
       if (error) throw error;
 
@@ -322,15 +337,16 @@ const MultiplayerGame = () => {
         description: error.message || "Failed to submit answers",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCelebrationComplete = () => {
     setShowCelebration(false);
-    setTimeLeft(room?.timer_duration || 60);
-    setAnswers({});
+    setIsSubmitting(false);
+    
+    // Navigate to results page
+    navigate(`/multiplayer-results/${roomId}`);
   };
 
   if (!room) return null;

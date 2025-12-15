@@ -217,42 +217,42 @@ const MultiplayerResults = () => {
   const isLastRound = room.current_round >= room.total_rounds;
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-4xl font-bold">Round {room.current_round} Results</h1>
-            <Badge variant="outline" className="text-lg px-4 py-2">
+    <div className="flex flex-col flex-1 p-4 pb-8 overflow-y-auto">
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-2xl font-bold">Round {room.current_round} Results</h1>
+            <Badge variant="outline" className="text-sm px-3 py-1">
               Letter: {room.current_letter}
             </Badge>
           </div>
 
           {/* Leaderboard */}
-          <Card className="p-6 mb-6 bg-gradient-primary border-0">
-            <div className="flex items-center gap-2 mb-4">
-              <Trophy className="w-6 h-6 text-white" />
-              <h2 className="text-2xl font-bold text-white">Leaderboard</h2>
+          <Card className="p-4 mb-4 bg-gradient-primary border-0">
+            <div className="flex items-center gap-2 mb-3">
+              <Trophy className="w-5 h-5 text-white" />
+              <h2 className="text-lg font-bold text-white">Leaderboard</h2>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {scores.map((player, index) => (
                 <div
                   key={player.player_name}
-                  className="flex items-center justify-between p-4 bg-background/20 rounded-lg backdrop-blur-sm"
+                  className="flex items-center justify-between p-3 bg-background/20 rounded-lg backdrop-blur-sm"
                 >
-                  <div className="flex items-center gap-4">
-                    <span className="text-2xl font-bold text-white w-8">
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg font-bold text-white w-6">
                       #{index + 1}
                     </span>
-                    <span className="text-lg font-semibold text-white">
+                    <span className="text-sm font-semibold text-white">
                       {player.player_name}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-white text-sm">
-                      {player.correct_answers}/{player.total_answers} correct
+                  <div className="flex items-center gap-3">
+                    <span className="text-white text-xs">
+                      {player.correct_answers}/{player.total_answers}
                     </span>
-                    <Badge className="text-lg px-4 py-1 bg-white text-primary">
-                      {player.score} pts
+                    <Badge className="text-sm px-2 py-0.5 bg-white text-primary">
+                      {player.score}
                     </Badge>
                   </div>
                 </div>
@@ -261,33 +261,33 @@ const MultiplayerResults = () => {
           </Card>
 
           {/* Answers by Category */}
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             {(Array.isArray(room.categories) ? room.categories : []).map((category) => (
-              <Card key={category} className="p-6 bg-gradient-card border-0">
-                <h3 className="text-xl font-bold mb-4">{category}</h3>
-                <div className="space-y-3">
+              <Card key={category} className="p-3 bg-gradient-card border-0">
+                <h3 className="text-base font-bold mb-2">{category}</h3>
+                <div className="space-y-2">
                   {answers
                     .filter((a) => a.category === category)
                     .map((answer, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between p-3 bg-background/50 rounded-lg"
+                        className="flex items-center justify-between p-2 bg-background/50 rounded-lg"
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           {answer.is_correct ? (
-                            <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
+                            <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                           ) : (
-                            <X className="w-5 h-5 text-destructive flex-shrink-0" />
+                            <X className="w-4 h-4 text-destructive flex-shrink-0" />
                           )}
                           <div>
-                            <p className="font-medium">{answer.player_name}</p>
-                            <p className={answer.is_correct ? "text-foreground" : "text-muted-foreground line-through"}>
+                            <p className="font-medium text-sm">{answer.player_name}</p>
+                            <p className={`text-xs ${answer.is_correct ? "text-foreground" : "text-muted-foreground line-through"}`}>
                               {answer.answer || "(no answer)"}
                             </p>
                           </div>
                         </div>
                         {answer.is_correct && (
-                          <Badge variant="secondary">+10</Badge>
+                          <Badge variant="secondary" className="text-xs">+10</Badge>
                         )}
                       </div>
                     ))}
@@ -298,23 +298,23 @@ const MultiplayerResults = () => {
 
           {/* Host Controls */}
           {isHost && (
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               {!isLastRound ? (
                 <Button
                   onClick={handleNextRound}
                   disabled={isProgressing}
                   className="flex-1 bg-gradient-primary"
-                  size="lg"
+                  size="default"
                 >
                   Next Round
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
                 <Button
                   onClick={handleFinishGame}
                   disabled={isProgressing}
                   className="flex-1 bg-gradient-primary"
-                  size="lg"
+                  size="default"
                 >
                   Finish Game
                 </Button>
@@ -323,8 +323,8 @@ const MultiplayerResults = () => {
           )}
 
           {!isHost && (
-            <Card className="p-6 text-center bg-muted">
-              <p className="text-muted-foreground">
+            <Card className="p-4 text-center bg-muted">
+              <p className="text-sm text-muted-foreground">
                 Waiting for host to {isLastRound ? "finish the game" : "start next round"}...
               </p>
             </Card>

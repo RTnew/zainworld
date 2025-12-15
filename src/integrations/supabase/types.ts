@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      dictionary_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          player_name: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          player_name: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          player_name?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       game_players: {
         Row: {
           id: string

@@ -138,78 +138,78 @@ const MultiplayerFinalResults = () => {
   const getRankIcon = (index: number) => {
     switch (index) {
       case 0:
-        return <Trophy className="w-8 h-8 text-primary" />;
+        return <Trophy className="w-6 h-6 text-primary" />;
       case 1:
-        return <Medal className="w-7 h-7 text-secondary" />;
+        return <Medal className="w-5 h-5 text-secondary" />;
       case 2:
-        return <Star className="w-6 h-6 text-accent" />;
+        return <Star className="w-5 h-5 text-accent" />;
       default:
-        return <span className="text-2xl font-bold text-muted-foreground">#{index + 1}</span>;
+        return <span className="text-lg font-bold text-muted-foreground">#{index + 1}</span>;
     }
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-game flex items-center justify-center p-4">
-        <Card className="p-8">
-          <p className="text-lg">Loading final results...</p>
+      <div className="flex flex-col flex-1 items-center justify-center p-4">
+        <Card className="p-6">
+          <p className="text-base">Loading final results...</p>
         </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-game flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl p-8 shadow-glow bg-gradient-card animate-fade-in">
-        <div className="text-center space-y-6">
-          <div className="flex justify-center gap-2 mb-4">
-            <Trophy className="w-12 h-12 text-primary animate-bounce" />
-            <Star className="w-12 h-12 text-secondary animate-bounce" style={{ animationDelay: "0.1s" }} />
-            <Trophy className="w-12 h-12 text-accent animate-bounce" style={{ animationDelay: "0.2s" }} />
+    <div className="flex flex-col flex-1 items-center justify-center p-4 pb-8 overflow-y-auto">
+      <Card className="w-full max-w-md p-6 shadow-glow bg-gradient-card animate-fade-in">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center gap-2 mb-2">
+            <Trophy className="w-8 h-8 text-primary animate-bounce" />
+            <Star className="w-8 h-8 text-secondary animate-bounce" style={{ animationDelay: "0.1s" }} />
+            <Trophy className="w-8 h-8 text-accent animate-bounce" style={{ animationDelay: "0.2s" }} />
           </div>
 
-          <h1 className="text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             Game Over!
           </h1>
 
           {stats.length > 0 && (
-            <div className="space-y-2 mb-6">
-              <p className="text-3xl font-bold text-primary animate-scale-in">
+            <div className="space-y-1 mb-4">
+              <p className="text-xl font-bold text-primary animate-scale-in">
                 🎉 {stats[0].playerName} Wins! 🎉
               </p>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 with {stats[0].totalScore} points
               </p>
             </div>
           )}
 
-          <div className="space-y-3 mt-8">
-            <h2 className="text-2xl font-semibold mb-4">Final Leaderboard</h2>
+          <div className="space-y-2 mt-6">
+            <h2 className="text-lg font-semibold mb-3">Final Leaderboard</h2>
             {stats.map((player, index) => (
               <Card
                 key={player.playerName}
-                className={`p-6 transition-all hover:scale-105 ${
+                className={`p-4 transition-all hover:scale-105 ${
                   index === 0 ? "bg-primary/10 border-primary" : ""
                 }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 flex justify-center">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 flex justify-center">
                       {getRankIcon(index)}
                     </div>
                     <div className="text-left">
-                      <p className="text-xl font-bold">{player.playerName}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {player.correctAnswers} / {player.totalAnswers} correct answers
+                      <p className="text-base font-bold">{player.playerName}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {player.correctAnswers} / {player.totalAnswers} correct
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-3xl font-bold text-primary">
+                    <p className="text-2xl font-bold text-primary">
                       {player.totalScore}
                     </p>
-                    <p className="text-xs text-muted-foreground">points</p>
+                    <p className="text-xs text-muted-foreground">pts</p>
                   </div>
                 </div>
               </Card>
@@ -218,8 +218,8 @@ const MultiplayerFinalResults = () => {
 
           <Button
             onClick={() => navigate("/menu")}
-            size="lg"
-            className="mt-8 w-full"
+            size="default"
+            className="mt-6 w-full"
           >
             Back to Menu
           </Button>

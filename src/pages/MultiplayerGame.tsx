@@ -352,7 +352,7 @@ const MultiplayerGame = () => {
   if (!room) return null;
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="flex flex-col flex-1 p-4 pb-8 overflow-y-auto">
       {showCelebration && (
         <RoundCelebration
           players={allPlayers}
@@ -360,37 +360,37 @@ const MultiplayerGame = () => {
         />
       )}
       
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-4xl font-bold">Round {room.current_round}</h1>
-            <div className="text-sm text-muted-foreground">
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-2xl font-bold">Round {room.current_round}</h1>
+            <div className="text-xs text-muted-foreground">
               Room: {room.room_code}
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <GameTimer
               timeLeft={timeLeft}
               totalTime={room.timer_duration}
               onTimeUp={handleTimeUp}
             />
           </div>
-          <Card className="p-8 text-center shadow-glow bg-gradient-primary border-0">
-            <p className="text-xl text-white mb-2">Current Letter</p>
-            <div className="text-8xl font-bold text-white">
+          <Card className="p-6 text-center shadow-glow bg-gradient-primary border-0">
+            <p className="text-base text-white mb-1">Current Letter</p>
+            <div className="text-6xl font-bold text-white">
               {room.current_letter}
             </div>
           </Card>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-4">
           <div>
-            <h2 className="text-2xl font-bold mb-4">Your Answers</h2>
-            <div className="space-y-4">
+            <h2 className="text-lg font-bold mb-3">Your Answers</h2>
+            <div className="space-y-3">
               {room.categories.map((category) => (
                 <div key={category}>
-                  <Label htmlFor={category} className="mb-2">
+                  <Label htmlFor={category} className="mb-1.5 text-sm">
                     {category}
                   </Label>
                   <div className="flex gap-2">
@@ -398,7 +398,8 @@ const MultiplayerGame = () => {
                       id={category}
                       value={answers[category] || ""}
                       onChange={(e) => handleAnswerChange(category, e.target.value)}
-                      placeholder={`Enter ${category.toLowerCase()} starting with ${room.current_letter}`}
+                      placeholder={`${category} starting with ${room.current_letter}`}
+                      className="text-base"
                     />
                     <Button
                       type="button"
@@ -423,20 +424,20 @@ const MultiplayerGame = () => {
             <Button
               onClick={submitAnswers}
               disabled={isSubmitting || showCelebration}
-              className="w-full mt-6 bg-gradient-primary"
-              size="lg"
+              className="w-full mt-4 bg-gradient-primary"
+              size="default"
             >
               {isSubmitting ? "Submitting..." : "Submit Answers"}
             </Button>
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold mb-4">Other Players</h2>
-            <div className="space-y-4">
+            <h2 className="text-lg font-bold mb-3">Other Players</h2>
+            <div className="space-y-3">
               {room.categories.map((category) => (
-                <Card key={category} className="p-4 bg-gradient-card border-0">
-                  <h3 className="font-semibold mb-2">{category}</h3>
-                  <div className="space-y-1 text-sm">
+                <Card key={category} className="p-3 bg-gradient-card border-0">
+                  <h3 className="font-medium text-sm mb-2">{category}</h3>
+                  <div className="space-y-1 text-xs">
                     {allAnswers
                       .filter((a) => a.category === category && a.player_name !== playerName)
                       .map((a, idx) => (

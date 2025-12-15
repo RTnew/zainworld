@@ -146,20 +146,20 @@ const MultiplayerSetup = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+    <div className="flex flex-col flex-1 p-4 pb-8 overflow-y-auto">
+      <div className="w-full max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={() => navigate("/menu")}>
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-4xl font-bold">Multiplayer</h1>
+            <h1 className="text-2xl font-bold">Multiplayer</h1>
           </div>
           <CategoryDictionary />
         </div>
 
-        <div className="mb-6">
-          <Label htmlFor="playerName" className="text-lg mb-2">
+        <div className="mb-4">
+          <Label htmlFor="playerName" className="text-base mb-2">
             Your Name
           </Label>
           <Input
@@ -167,17 +167,17 @@ const MultiplayerSetup = () => {
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
             placeholder="Enter your name"
-            className="text-lg"
+            className="text-base"
           />
         </div>
 
-        <Card className="p-6 mb-6 shadow-card bg-gradient-card border-0">
-          <h2 className="text-xl font-bold mb-4">Game Settings</h2>
+        <Card className="p-4 mb-4 shadow-card bg-gradient-card border-0">
+          <h2 className="text-lg font-bold mb-3">Game Settings</h2>
           
-          <div className="space-y-6 mb-6">
+          <div className="space-y-4">
             <div>
-              <Label className="text-base font-semibold mb-3 block">
-                Time per Round: {timeLimit[0]} seconds
+              <Label className="text-sm font-semibold mb-2 block">
+                Time per Round: {timeLimit[0]}s
               </Label>
               <Slider
                 value={timeLimit}
@@ -189,8 +189,8 @@ const MultiplayerSetup = () => {
             </div>
 
             <div>
-              <Label className="text-base font-semibold mb-3 block">
-                Number of Rounds: {rounds[0]}
+              <Label className="text-sm font-semibold mb-2 block">
+                Rounds: {rounds[0]}
               </Label>
               <Slider
                 value={rounds}
@@ -203,34 +203,34 @@ const MultiplayerSetup = () => {
           </div>
         </Card>
 
-        <Card className="p-6 mb-6 shadow-card bg-gradient-card border-0">
-          <div className="flex items-center gap-3 mb-4">
-            <Plus className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-bold">Create Room</h2>
+        <Card className="p-4 mb-4 shadow-card bg-gradient-card border-0">
+          <div className="flex items-center gap-2 mb-3">
+            <Plus className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold">Create Room</h2>
           </div>
-          <p className="text-muted-foreground mb-4">
-            Start a new game and invite friends with a room code
+          <p className="text-sm text-muted-foreground mb-3">
+            Start a new game and invite friends
           </p>
           <Button
             onClick={createRoom}
             disabled={isCreating}
             className="w-full bg-gradient-primary"
-            size="lg"
+            size="default"
           >
             {isCreating ? "Creating..." : "Create Room"}
           </Button>
         </Card>
 
-        <Card className="p-6 shadow-card bg-gradient-card border-0">
-          <div className="flex items-center gap-3 mb-4">
-            <Users className="w-6 h-6 text-secondary" />
-            <h2 className="text-2xl font-bold">Join Room</h2>
+        <Card className="p-4 shadow-card bg-gradient-card border-0">
+          <div className="flex items-center gap-2 mb-3">
+            <Users className="w-5 h-5 text-secondary" />
+            <h2 className="text-lg font-bold">Join Room</h2>
           </div>
-          <p className="text-muted-foreground mb-4">
-            Enter a room code to join a friend's game
+          <p className="text-sm text-muted-foreground mb-3">
+            Enter a room code to join
           </p>
-          <div className="mb-4">
-            <Label htmlFor="roomCode" className="mb-2">
+          <div className="mb-3">
+            <Label htmlFor="roomCode" className="mb-2 text-sm">
               Room Code
             </Label>
             <Input
@@ -239,7 +239,7 @@ const MultiplayerSetup = () => {
               onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
               placeholder="Enter 6-digit code"
               maxLength={6}
-              className="text-lg text-center font-mono"
+              className="text-base text-center font-mono"
             />
           </div>
           <Button
@@ -247,7 +247,7 @@ const MultiplayerSetup = () => {
             disabled={isJoining}
             variant="secondary"
             className="w-full"
-            size="lg"
+            size="default"
           >
             {isJoining ? "Joining..." : "Join Room"}
           </Button>
